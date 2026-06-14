@@ -15,6 +15,7 @@
     "@astrojs/node": "^10.1.4",
     "@astrojs/react": "^5.0.7",
     "@astrojs/tailwind": "^6.0.2",
+    "@astrojs/vercel": "^10.0.8",
     "@sensinum/astro-strapi-blocks": "^1.4.0",
     "@tailwindcss/vite": "^4.3.0",
     "@types/react": "^19.2.17",
