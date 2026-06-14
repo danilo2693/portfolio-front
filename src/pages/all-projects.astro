@@ -10,6 +10,10 @@ const lang = Astro.url.searchParams.get("lang") || "en";
 const t = useTranslations(lang as any);
 const isDraft = Astro.cookies.has("preview_mode");
 
+if (isDraft) {
+  Astro.response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+}
+
 // Fetching ALL projects from Strapi API
 const projectsRes = await getProjects(lang, undefined, isDraft);
 const projects = projectsRes?.data || [];

@@ -16,7 +16,12 @@ export async function fetchAPI(endpoint: string, queryParams: Record<string, str
     url.searchParams.append('status', 'draft');
   }
 
-  const res = await fetch(url.toString(), { headers });
+  const fetchOptions: RequestInit = { headers };
+  if (isDraft) {
+    fetchOptions.cache = 'no-store';
+  }
+
+  const res = await fetch(url.toString(), fetchOptions);
   
   if (!res.ok) {
     console.error(`Error fetching ${url}: ${res.statusText}`);
@@ -37,7 +42,12 @@ export async function getProjects(locale = 'en', limit?: number, isDraft = false
   const url = new URL(`${API_URL}/api/projects`);
   Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
-  const res = await fetch(url.toString(), { headers });
+  const fetchOptions: RequestInit = { headers };
+  if (isDraft) {
+    fetchOptions.cache = 'no-store';
+  }
+
+  const res = await fetch(url.toString(), fetchOptions);
   if (!res.ok) {
     console.error(`Error fetching projects: ${res.statusText}`);
     return { data: [], meta: { pagination: { total: 0 } } };

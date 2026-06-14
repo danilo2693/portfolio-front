@@ -11,6 +11,10 @@ import { getAbout, getExperiences, getProjects } from "../lib/api";
 const lang = Astro.url.searchParams.get("lang") || "en";
 const isDraft = Astro.cookies.has("preview_mode");
 
+if (isDraft) {
+  Astro.response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+}
+
 // Fetching data from Strapi API
 const about = await getAbout(lang, isDraft);
 const experiences = await getExperiences(lang, isDraft);
