@@ -1,17 +1,30 @@
 ---
+export const prerender = false;
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.tsx";
+import Experience from "../components/sections/Experience.astro";
+import Projects from "../components/sections/Projects.astro";
+import About from "../components/sections/About.astro";
+import Contact from "../components/sections/Contact.astro";
+import { getAbout, getExperiences, getProjects } from "../lib/api";
 
+const lang = Astro.url.searchParams.get("lang") || "en";
+
+// Fetching data from Strapi API
+const about = await getAbout(lang);
+const experiences = await getExperiences(lang);
+const projectsRes = await getProjects(lang, 3);
+const projects = projectsRes?.data || [];
+const totalProjects = projectsRes?.meta?.pagination?.total || 0;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Portfolio">
+  <Header client:load initialLang={lang as "en" | "es"} isHome={true} />
+
+  <main class="pt-20">
+    <Experience lang={lang} experiences={experiences || []} about={about} />
+    <Projects lang={lang} projects={projects} totalProjects={totalProjects} />
+    <About lang={lang} about={about} />
+    <Contact lang={lang} />
+  </main>
+</Layout>

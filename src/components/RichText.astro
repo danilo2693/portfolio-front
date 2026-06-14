@@ -1,0 +1,22 @@
+---
+import { StrapiBlocks } from "@sensinum/astro-strapi-blocks";
+
+interface Props {
+  data: any;
+}
+
+const { data } = Astro.props;
+---
+
+{data ? (
+  <StrapiBlocks
+    data={data}
+    theme={{
+      extend: {
+        paragraph: {
+          strong: ["text-blue-600"],
+        },
+      },
+    }}
+  />
+) : null}

@@ -1,0 +1,55 @@
+---
+import { User } from "lucide-react";
+import RichText from "../RichText.astro";
+import EmptyState from "../EmptyState.astro";
+import { useTranslations } from "../../i18n/utils";
+interface LinkData {
+  id: number;
+  title: string;
+  url: string;
+  icon: string;
+}
+
+interface AboutData {
+  name: string;
+  description: any[];
+  email: string;
+  photos: any[];
+  cv: any;
+  links: LinkData[];
+}
+
+interface Props {
+  lang: string;
+  about: AboutData | null;
+}
+
+const { lang, about } = Astro.props;
+const t = useTranslations(lang as any);
+---
+
+<section id="about" class="flex items-center justify-center pb-20">
+  <div class="max-w-5xl w-full mx-auto p-6">
+    <h2
+      class="text-4xl font-bold text-left flex items-center justify-left gap-2"
+    >
+      <User size={32} />
+      {t("section.about")}
+    </h2>
+    <div
+      class="mb-12 h-px w-40 bg-gradient-to-r from-blue-400/70 to-transparent"
+    >
+    </div>
+    {
+      about ? (
+        <div class="text-center md:text-left">
+          <div class="text-lg text-gray-600 dark:text-gray-400 prose dark:prose-invert max-w-none">
+            <RichText data={about.description} />
+          </div>
+        </div>
+      ) : (
+        <EmptyState message={t("empty.about")} />
+      )
+    }
+  </div>
+</section>

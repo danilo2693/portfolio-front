@@ -1,0 +1,115 @@
+---
+import { Mail } from "lucide-react";
+import { useTranslations } from "../../i18n/utils";
+interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang as any);
+---
+
+<section id="contact" class="flex items-center justify-center py-20">
+  <div class="max-w-md w-full mx-auto p-6">
+    <h2
+      class="text-4xl font-bold mb-8 text-left flex items-center justify-left gap-2"
+    >
+      <Mail size={32} />
+      {t("section.contact")}
+    </h2>
+    <form class="space-y-4" id="contact-form" data-success={t("contact.success")} data-error={t("contact.error")}>
+      <div>
+        <label class="block text-sm font-medium mb-1" for="name">
+          {t("contact.name")}
+        </label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1" for="email">
+          {t("contact.email")}
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1" for="message">
+          {t("contact.message")}
+        </label>
+        <textarea
+          id="message"
+          name="message"
+          rows={4}
+          required
+          class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 outline-none focus:ring-2 focus:ring-blue-500"
+        ></textarea>
+      </div>
+
+      <div
+        id="form-status"
+        class="hidden text-sm font-medium text-center p-3 rounded-lg"
+      >
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors"
+      >
+        {t("contact.send")}
+      </button>
+    </form>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById("contact-form") as HTMLFormElement;
+  const statusDiv = document.getElementById("form-status");
+
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (!statusDiv) return;
+
+      const formData = new FormData(form);
+      const data = {
+        name: formData.get("name"),
+        email: formData.get("email"),
+        message: formData.get("message"),
+      };
+
+      try {
+        const response = await fetch("/api/contact-messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ data }),
+        });
+
+        if (response.ok) {
+          statusDiv.textContent = form.dataset.success || "Message sent successfully!";
+          statusDiv.className =
+            "text-sm font-medium text-center p-3 rounded-lg bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+          form.reset();
+        } else {
+          throw new Error("Failed to send");
+        }
+      } catch (err) {
+        statusDiv.textContent = form.dataset.error || "Failed to send message. Please try again.";
+        statusDiv.className =
+          "text-sm font-medium text-center p-3 rounded-lg bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+      }
+    });
+  }
+</script>

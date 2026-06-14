@@ -1,0 +1,96 @@
+---
+import { BriefcaseBusiness, SquareCode } from "lucide-react";
+import RichText from "../RichText.astro";
+import EmptyState from "../EmptyState.astro";
+import { useTranslations } from "../../i18n/utils";
+import ProfileHeader from "./ProfileHeader.astro";
+
+interface ExperienceData {
+  id: number;
+  documentId: string;
+  title: string;
+  companyName: string;
+  periodTime: string;
+  description: any[];
+}
+
+interface Props {
+  lang: string;
+  experiences: ExperienceData[];
+  about?: any; // Added about prop
+}
+
+const { lang, experiences = [], about } = Astro.props;
+const t = useTranslations(lang as any);
+---
+
+<section id="experience" class="flex items-center justify-center py-20">
+  <div class="max-w-5xl w-full mx-auto p-6">
+    <!-- Render the Profile Header (extracted from About) at the top of the Experience section -->
+    {about && <ProfileHeader lang={lang} about={about} />}
+
+    <h2
+      class="text-4xl font-bold text-left flex items-center justify-left gap-2"
+    >
+      <BriefcaseBusiness size={32} />
+      {t("section.experience")}
+    </h2>
+    <div
+      class="mb-12 h-px w-40 bg-gradient-to-r from-blue-400/70 to-transparent"
+    >
+    </div>
+
+    <div class="relative max-w-5xl mx-auto mt-16">
+      {
+        experiences.length > 0 ? (
+          <>
+            {/* The Vertical Timeline Line */}
+            <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-800 transform md:-translate-x-1/2" />
+
+            <div class="space-y-12">
+              {experiences.map((exp, index) => {
+                const isLeft = index % 2 === 0;
+                return (
+                  <div class="relative flex flex-col md:flex-row items-start w-full group">
+                    {/* Icon Mark Point */}
+                    <div class="absolute left-4 md:left-1/2 top-0 w-10 h-10 rounded-full bg-blue-600 border-4 border-white dark:border-gray-950 flex items-center justify-center transform -translate-x-1/2 shadow-lg z-10 mt-0 transition-transform group-hover:scale-110 duration-300">
+                      <SquareCode className="w-4 h-4 text-white" />
+                    </div>
+
+                    {/* Content Box */}
+                    <div
+                      class={`w-[calc(100%-3rem)] md:w-[45%] ml-auto md:ml-0 ${isLeft ? "md:mr-auto" : "md:ml-auto"}`}
+                    >
+                      <div
+                        class={`px-4 transition-shadow relative ${isLeft ? "md:text-right" : "md:text-left"}`}
+                      >
+                        <div
+                          class={`flex flex-col mb-4 ${isLeft ? "md:items-end" : "md:items-start"}`}
+                        >
+                          <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
+                            {exp.title}
+                          </h3>
+                          <p class="text-xl text-blue-600 dark:text-blue-400 font-medium">
+                            {exp.companyName}
+                          </p>
+                          <span class="inline-flex items-center text-sm font-medium mt-1">
+                            {exp.periodTime}
+                          </span>
+                        </div>
+                        <div class="text-gray-600 dark:text-gray-400 prose dark:prose-invert max-w-none mt-4 text-left">
+                          <RichText data={exp.description} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <EmptyState message={t("empty.experience")} />
+        )
+      }
+    </div>
+  </div>
+</section>

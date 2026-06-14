@@ -1,0 +1,139 @@
+---
+import { Image } from "astro:assets";
+import RichText from "../RichText.astro";
+import { useTranslations } from "../../i18n/utils";
+interface LinkData {
+  id: number;
+  title: string;
+  url: string;
+  icon: string;
+}
+
+interface AboutData {
+  name: any;
+  description: any[];
+  email: string;
+  photos: any[];
+  cv: any;
+  links: LinkData[];
+  summary: any[];
+}
+
+interface Props {
+  lang: string;
+  about: AboutData | null;
+}
+
+const { lang, about } = Astro.props;
+const t = useTranslations(lang as any);
+
+function getMediaUrl(media: any) {
+  if (!media || !media.url) return "";
+  const url = import.meta.env.STRAPI_URL || "http://127.0.0.1:1337";
+  return media.url.startsWith("http") ? media.url : `${url}${media.url}`;
+}
+---
+
+{
+  about && (
+    <div class="flex flex-col md:flex-row gap-12 items-center justify-center mb-20">
+      <div class="w-48 h-48 md:w-64 md:h-64 shrink-0 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-xl">
+        {about.photos && about.photos.length > 0 ? (
+          <Image
+            src={getMediaUrl(about.photos[0])}
+            alt="Profile photo"
+            inferSize={true}
+            class="w-full h-full object-cover"
+          />
+        ) : (
+          <div class="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-500 text-6xl font-bold" />
+        )}
+      </div>
+
+      <div class="flex-1 text-center md:text-left">
+        <h3 class="text-4xl md:text-5xl font-bold mb-4">
+          <span class="text-black dark:text-white">
+            <RichText data={about.name} />
+          </span>
+        </h3>
+
+        <p class="text-gray-600 dark:text-gray-400 mt-4">
+          <RichText data={about.summary} />
+        </p>
+
+        <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-8">
+          {about.cv && (
+            <a
+              href={getMediaUrl(about.cv)}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full transition-colors flex items-center gap-2 shadow-sm"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" x2="12" y1="15" y2="3" />
+              </svg>
+              {t("profile.download_cv")}
+            </a>
+          )}
+
+          {about.email && (
+            <a
+              href={`mailto:${about.email}`}
+              class="px-6 py-3 bg-gray-900 hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 text-white font-medium rounded-full transition-colors flex items-center gap-2 shadow-sm"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect width="20" height="16" x="2" y="4" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              </svg>
+              {t("profile.contact")}
+            </a>
+          )}
+
+          <div class="flex items-center gap-3">
+            {about.links &&
+              about.links.map((link) => (
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={link.title}
+                  class="w-12 h-12 flex items-center justify-center rounded-full bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-gray-700 transition-colors shadow-sm"
+                >
+                  {link.icon ? (
+                    <div
+                      class="w-5 h-5 [&>svg]:w-5 [&>svg]:h-5"
+                      set:html={link.icon}
+                    />
+                  ) : (
+                    <span class="font-medium">{link.title.charAt(0)}</span>
+                  )}
+                </a>
+              ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
