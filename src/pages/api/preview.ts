@@ -8,7 +8,7 @@ export const GET: APIRoute = async ({ request, redirect, cookies }) => {
 
   // Verify the secret against your environment variable.
   if (secret !== import.meta.env.PREVIEW_SECRET) {
-    return new Response('<h1>Invalid token</h1>', { 
+    return new Response('<h1>Invalid token</h1>', {
       status: 401,
       headers: {
         'Content-Type': 'text/html'
