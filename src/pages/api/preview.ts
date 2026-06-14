@@ -20,9 +20,9 @@ export const GET: APIRoute = async ({ request, redirect, cookies }) => {
 
   // Set a cookie to enable preview mode for draft content
   if (status === 'draft') {
-    cookies.set('preview_mode', 'true', { path: '/', httpOnly: true });
+    cookies.set('preview_mode', 'true', { path: '/', httpOnly: true, sameSite: 'none', secure: true });
   } else {
-    cookies.delete('preview_mode', { path: '/' });
+    cookies.delete('preview_mode', { path: '/', sameSite: 'none', secure: true });
   }
 
   // Redirect to the appropriate URL
