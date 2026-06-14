@@ -14,6 +14,7 @@ export async function fetchAPI(endpoint: string, queryParams: Record<string, str
   });
   if (isDraft) {
     url.searchParams.append('status', 'draft');
+    url.searchParams.append('t', Date.now().toString());
   }
 
   const fetchOptions: RequestInit = { headers };
@@ -34,7 +35,10 @@ export async function fetchAPI(endpoint: string, queryParams: Record<string, str
 
 export async function getProjects(locale = 'en', limit?: number, isDraft = false) {
   const params: Record<string, string> = { populate: '*', locale, sort: 'sortOrder:asc' };
-  if (isDraft) params.status = 'draft';
+  if (isDraft) {
+    params.status = 'draft';
+    params.t = Date.now().toString();
+  }
   if (limit) {
     params['pagination[limit]'] = limit.toString();
   }
