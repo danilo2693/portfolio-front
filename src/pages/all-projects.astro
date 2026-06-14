@@ -8,15 +8,16 @@ import { useTranslations } from "../i18n/utils";
 
 const lang = Astro.url.searchParams.get("lang") || "en";
 const t = useTranslations(lang as any);
+const isDraft = Astro.cookies.has("preview_mode");
 
 // Fetching ALL projects from Strapi API
-const projectsRes = await getProjects(lang);
+const projectsRes = await getProjects(lang, undefined, isDraft);
 const projects = projectsRes?.data || [];
 const totalProjects = projectsRes?.meta?.pagination?.total || 0;
 ---
 
 <Layout title="All Projects">
-  <Header client:load initialLang={lang as "en" | "es"} isHome={false} />
+  <Header client:load initialLang={lang as "en" | "es"} isHome={false} isDraft={isDraft} />
 
   <main class="pt-20 min-h-screen flex flex-col">
     <div class="max-w-5xl w-full mx-auto px-6 pt-12 pb-4">

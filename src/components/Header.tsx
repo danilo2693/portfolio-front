@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Moon, Sun, Monitor, Globe, BriefcaseBusiness, FolderGit2, User, Mail, Menu, X } from "lucide-react";
+import { Moon, Sun, Monitor, Globe, BriefcaseBusiness, FolderGit2, User, Mail, Menu, X, Eye } from "lucide-react";
 
 const navLinks = {
   en: [
@@ -18,7 +18,7 @@ const navLinks = {
 
 type Theme = 'light' | 'dark' | 'system';
 
-export default function Header({ initialLang, isHome }: { initialLang: 'en' | 'es', isHome: boolean }) {
+export default function Header({ initialLang, isHome, isDraft = false }: { initialLang: 'en' | 'es', isHome: boolean, isDraft?: boolean }) {
   const [activeId, setActiveId] = useState('');
   const [theme, setTheme] = useState<Theme>('system');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -103,6 +103,12 @@ export default function Header({ initialLang, isHome }: { initialLang: 'en' | 'e
         : 'bg-transparent'
         }`}
     >
+      {isDraft && (
+        <div className="bg-amber-500/90 backdrop-blur-sm text-white text-xs font-bold uppercase tracking-wider text-center py-1.5 w-full shadow-sm flex items-center justify-center gap-2">
+          <Eye className="w-4 h-4" />
+          Preview Mode - Showing Draft Content
+        </div>
+      )}
       <div className="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between md:justify-center">
         {/* Empty div for mobile flex balancing if needed, but we'll use justify-between on mobile */}
         <div className="md:hidden"></div>

@@ -9,17 +9,18 @@ import Contact from "../components/sections/Contact.astro";
 import { getAbout, getExperiences, getProjects } from "../lib/api";
 
 const lang = Astro.url.searchParams.get("lang") || "en";
+const isDraft = Astro.cookies.has("preview_mode");
 
 // Fetching data from Strapi API
-const about = await getAbout(lang);
-const experiences = await getExperiences(lang);
-const projectsRes = await getProjects(lang, 3);
+const about = await getAbout(lang, isDraft);
+const experiences = await getExperiences(lang, isDraft);
+const projectsRes = await getProjects(lang, 3, isDraft);
 const projects = projectsRes?.data || [];
 const totalProjects = projectsRes?.meta?.pagination?.total || 0;
 ---
 
 <Layout title="Portfolio">
-  <Header client:load initialLang={lang as "en" | "es"} isHome={true} />
+  <Header client:load initialLang={lang as "en" | "es"} isHome={true} isDraft={isDraft} />
 
   <main class="pt-20">
     <Experience lang={lang} experiences={experiences || []} about={about} />

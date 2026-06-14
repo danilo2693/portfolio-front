@@ -6,12 +6,15 @@ const headers = {
   'Content-Type': 'application/json'
 };
 
-export async function fetchAPI(endpoint: string, queryParams: Record<string, string> = {}) {
+export async function fetchAPI(endpoint: string, queryParams: Record<string, string> = {}, isDraft = false) {
   const url = new URL(`${API_URL}/api${endpoint}`);
   
   Object.keys(queryParams).forEach(key => {
     url.searchParams.append(key, queryParams[key]);
   });
+  if (isDraft) {
+    url.searchParams.append('status', 'draft');
+  }
 
   const res = await fetch(url.toString(), { headers });
   
@@ -24,8 +27,9 @@ export async function fetchAPI(endpoint: string, queryParams: Record<string, str
   return json.data;
 }
 
-export async function getProjects(locale = 'en', limit?: number) {
+export async function getProjects(locale = 'en', limit?: number, isDraft = false) {
   const params: Record<string, string> = { populate: '*', locale, sort: 'sortOrder:asc' };
+  if (isDraft) params.status = 'draft';
   if (limit) {
     params['pagination[limit]'] = limit.toString();
   }
@@ -41,10 +45,10 @@ export async function getProjects(locale = 'en', limit?: number) {
   return await res.json();
 }
 
-export async function getExperiences(locale = 'en') {
-  return await fetchAPI('/experiences', { populate: '*', locale, sort: 'sortOrder:asc' });
+export async function getExperiences(locale = 'en', isDraft = false) {
+  return await fetchAPI('/experiences', { populate: '*', locale, sort: 'sortOrder:asc' }, isDraft);
 }
 
-export async function getAbout(locale = 'en') {
-  return await fetchAPI('/about', { populate: '*', locale });
+export async function getAbout(locale = 'en', isDraft = false) {
+  return await fetchAPI('/about', { populate: '*', locale }, isDraft);
 }
