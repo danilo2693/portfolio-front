@@ -15,6 +15,7 @@ export default defineConfig({
   },
 
   image: {
+    domains: ['gorgeous-dinosaur-03b8830672.media.strapiapp.com'],
     remotePatterns: [{ protocol: 'http' }, { protocol: 'https' }]
   },
 
