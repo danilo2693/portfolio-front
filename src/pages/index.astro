@@ -11,10 +11,6 @@ import { getAbout, getExperiences, getProjects } from "../lib/api";
 const lang = Astro.url.searchParams.get("lang") || "en";
 const isDraft = Astro.cookies.has("preview_mode");
 
-if (isDraft) {
-  Astro.response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-}
-
 // Fetching data from Strapi API
 const about = await getAbout(lang, isDraft);
 const experiences = await getExperiences(lang, isDraft);
@@ -24,7 +20,12 @@ const totalProjects = projectsRes?.meta?.pagination?.total || 0;
 ---
 
 <Layout title="Portfolio">
-  <Header client:load initialLang={lang as "en" | "es"} isHome={true} isDraft={isDraft} />
+  <Header
+    client:load
+    initialLang={lang as "en" | "es"}
+    isHome={true}
+    isDraft={isDraft}
+  />
 
   <main class="pt-20">
     <Experience lang={lang} experiences={experiences || []} about={about} />
