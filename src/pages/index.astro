@@ -11,12 +11,12 @@ import { getAbout, getExperiences, getProjects } from "../lib/api";
 const lang = Astro.url.searchParams.get("lang") || "en";
 const isDraft = Astro.cookies.has("preview_mode");
 
-Astro.response.headers.set(
-  "Cache-Control",
-  "no-store, no-cache, must-revalidate, proxy-revalidate",
-);
+// Prevent Vercel from caching the response, especially for the root route without query params
+Astro.response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
 Astro.response.headers.set("Pragma", "no-cache");
 Astro.response.headers.set("Expires", "0");
+// Ensure edge cache varies by language and preview cookie
+Astro.response.headers.set("Vary", "Accept-Language, Cookie");
 
 // Fetching data from Strapi API
 const about = await getAbout(lang, isDraft);
