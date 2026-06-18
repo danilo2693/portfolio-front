@@ -11,11 +11,16 @@ import { getAbout, getExperiences, getProjects } from "../lib/api";
 const lang = Astro.url.searchParams.get("lang") || "en";
 const isDraft = Astro.cookies.has("preview_mode");
 
-const about = await getAbout(lang, isDraft);
-const experiences = await getExperiences(lang, isDraft);
-const projectsRes = await getProjects(lang, 3, isDraft);
-const projects = projectsRes?.data || [];
-const totalProjects = projectsRes?.meta?.pagination?.total || 0;
+const siteDataRes = await fetch(`/api/site-data?lang=${lang}`);
+if (!siteDataRes.ok) {
+  console.error('Failed to load site data');
+  throw new Error('Site data fetch failed');
+}
+const siteData = await siteDataRes.json();
+const about = siteData.about;
+const experiences = siteData.experiences;
+const projects = siteData.projects;
+const totalProjects = siteData.totalProjects;
 ---
 
 <Layout title="Portfolio">
