@@ -45,8 +45,48 @@ export async function fetchAPI(
   }
 
   const json = await res.json();
-  return json.data;
+  return json;
 }
+
+/**
+ * Fetch data from Strapi GraphQL endpoint with optional variables.
+ * Uses exponential back‑off for HTTP 429 responses (up to 3 attempts).
+ */
+export async function fetchGraphQL(
+  query: string,
+  variables: Record<string, any> = {},
+  isDraft = false
+) {
+  const url = `${API_URL}/graphql`;
+  // Include draft flag if needed
+  const searchParams = new URLSearchParams();
+  if (isDraft) searchParams.append('status', 'DRAFT');
+  const fullUrl = searchParams.toString() ? `${url}?${searchParams}` : url;
+
+  let attempt = 1;
+  const maxAttempts = 3;
+  while (true) {
+    const res = await fetch(fullUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ query, variables }),
+    });
+    if (res.status === 429 && attempt < maxAttempts) {
+      const delay = 200 * Math.pow(2, attempt - 1);
+      console.warn(`GraphQL Rate limited – retry ${attempt}/${maxAttempts} in ${delay}ms`);
+      await new Promise((r) => setTimeout(r, delay));
+      attempt++;
+      continue;
+    }
+    if (!res.ok) {
+      console.error(`GraphQL fetch error ${res.status}: ${res.statusText}`);
+      return null;
+    }
+    const json = await res.json();
+    return json;
+  }
+}
+
 
 export async function getProjects(locale = 'en', limit?: number, isDraft = false) {
   const params: Record<string, string> = { populate: '*', locale, sort: 'sortOrder:asc' };

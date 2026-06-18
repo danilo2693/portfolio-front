@@ -6,21 +6,59 @@ import Experience from "../components/sections/Experience.astro";
 import Projects from "../components/sections/Projects.astro";
 import About from "../components/sections/About.astro";
 import Contact from "../components/sections/Contact.astro";
-import { getAbout, getExperiences, getProjects } from "../lib/api";
+import { fetchGraphQL } from "../lib/api";
 
 const lang = Astro.url.searchParams.get("lang") || "en";
 const isDraft = Astro.cookies.has("preview_mode");
 
-const siteDataRes = await fetch(`${Astro.url.origin}/api/site-data?lang=${lang}`);
-if (!siteDataRes.ok) {
-  console.error('Failed to load site data');
-  throw new Error('Site data fetch failed');
+const GET_SITE_DATA = `
+  query GetSiteData($locale: I18NLocaleCode = "en", $status: PublicationStatus = PUBLISHED) {
+    about (locale: $locale, status: $status) {
+      description
+      cv { url }
+      email
+      links { icon title url }
+      name
+      photos { url }
+      summary
+    }
+    experiences (locale: $locale, status: $status) {
+      companyName
+      description
+      title
+      periodTime
+    }
+    projects (locale: $locale, status: $status) {
+      description
+      githubUrl
+      siteUrl
+      stack { icon title }
+      title
+      photos { url }
+    }
+  }
+`;
+// Fetch using the new GraphQL helper
+const gqlResponse = await fetchGraphQL(
+  GET_SITE_DATA,
+  { locale: lang },
+  isDraft,
+);
+const siteData = gqlResponse?.data ?? null;
+console.log({ siteData });
+let about = null,
+  experiences = [],
+  projects = [],
+  totalProjects = 0;
+
+if (!siteData) {
+  console.error("Failed to load site data");
+} else {
+  about = siteData.about;
+  experiences = siteData.experiences;
+  projects = siteData.projects;
+  totalProjects = siteData.projects.length;
 }
-const siteData = await siteDataRes.json();
-const about = siteData.about;
-const experiences = siteData.experiences;
-const projects = siteData.projects;
-const totalProjects = siteData.totalProjects;
 ---
 
 <Layout title="Portfolio">
