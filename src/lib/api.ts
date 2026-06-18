@@ -15,15 +15,8 @@ export async function fetchAPI(endpoint: string, queryParams: Record<string, str
   if (isDraft) {
     url.searchParams.append('status', 'draft');
   }
-  // Cache‑busting param to ensure a fresh request each time
-  url.searchParams.append('_t', Date.now().toString());
 
-  const res = await fetch(url.toString(), {
-    headers,
-    cache: 'no-store',
-    // Disable Vercel/Next.js incremental caching
-    next: { revalidate: 0 }
-  });
+  const res = await fetch(url.toString(), { headers });
 
   if (!res.ok) {
     console.error(`Error fetching ${url}: ${res.statusText}`);
@@ -45,16 +38,10 @@ export async function getProjects(locale = 'en', limit?: number, isDraft = false
 
   const url = new URL(`${API_URL}/api/projects`);
   Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-  // Cache‑busting param for projects endpoint as well
-  url.searchParams.append('_t', Date.now().toString());
 
 
-  const res = await fetch(url.toString(), {
-    headers,
-    cache: 'no-store',
-    // Disable Vercel/Next.js incremental caching
-    next: { revalidate: 0 }
-  });
+
+  const res = await fetch(url.toString(), { headers });
   if (!res.ok) {
     console.error(`Error fetching projects: ${res.statusText}`);
     return { data: [], meta: { pagination: { total: 0 } } };
