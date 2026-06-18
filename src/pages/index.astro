@@ -8,7 +8,7 @@ import About from "../components/sections/About.astro";
 import Contact from "../components/sections/Contact.astro";
 import { getAbout, getExperiences, getProjects } from "../lib/api";
 
-const lang = Astro.url.searchParams.get("lang") || "es";
+const lang = Astro.url.searchParams.get("lang") || "en";
 const isDraft = Astro.cookies.has("preview_mode");
 
 const about = await getAbout(lang, isDraft);
@@ -16,8 +16,6 @@ const experiences = await getExperiences(lang, isDraft);
 const projectsRes = await getProjects(lang, 3, isDraft);
 const projects = projectsRes?.data || [];
 const totalProjects = projectsRes?.meta?.pagination?.total || 0;
-
-console.log({ lang, isDraft, projects, about, experiences });
 ---
 
 <Layout title="Portfolio">
