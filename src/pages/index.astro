@@ -11,7 +11,7 @@ import { getAbout, getExperiences, getProjects } from "../lib/api";
 const lang = Astro.url.searchParams.get("lang") || "en";
 const isDraft = Astro.cookies.has("preview_mode");
 
-const siteDataRes = await fetch(`/api/site-data?lang=${lang}`);
+const siteDataRes = await fetch(`${Astro.url.origin}/api/site-data?lang=${lang}`);
 if (!siteDataRes.ok) {
   console.error('Failed to load site data');
   throw new Error('Site data fetch failed');
