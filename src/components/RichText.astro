@@ -6,17 +6,26 @@ interface Props {
 }
 
 const { data } = Astro.props;
+
+const isStrapiBlocks = Array.isArray(data) && data.length > 0 && typeof data[0] === 'object' && data[0]?.type;
+const isString = typeof data === 'string';
 ---
 
 {data ? (
-  <StrapiBlocks
-    data={data}
-    theme={{
-      extend: {
-        paragraph: {
-          strong: ["text-blue-600"],
+  isStrapiBlocks ? (
+    <StrapiBlocks
+      data={data}
+      theme={{
+        extend: {
+          paragraph: {
+            strong: ["text-blue-600"],
+          },
         },
-      },
-    }}
-  />
+      }}
+    />
+  ) : isString ? (
+    <span>{data}</span>
+  ) : (
+    <span>{String(data)}</span>
+  )
 ) : null}

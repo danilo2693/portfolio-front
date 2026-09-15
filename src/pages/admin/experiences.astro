@@ -1,0 +1,15 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import ExperienceManager from '../../components/admin/ExperienceManager';
+import { prisma } from '../../lib/prisma';
+
+export const prerender = false;
+
+const initialExperiences = await prisma.experience.findMany({
+  orderBy: { orderIndex: 'asc' },
+});
+---
+
+<AdminLayout title="Experiencia Laboral" currentPath="/admin/experiences">
+  <ExperienceManager client:load initialExperiences={initialExperiences as any} />
+</AdminLayout>

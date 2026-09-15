@@ -1,0 +1,20 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import ProjectManager from '../../components/admin/ProjectManager';
+import { prisma } from '../../lib/prisma';
+
+export const prerender = false;
+
+const initialProjects = await prisma.project.findMany({
+  include: {
+    photos: {
+      orderBy: { orderIndex: 'asc' },
+    },
+  },
+  orderBy: { orderIndex: 'asc' },
+});
+---
+
+<AdminLayout title="Gestión de Proyectos" currentPath="/admin/projects">
+  <ProjectManager client:load initialProjects={initialProjects as any} />
+</AdminLayout>

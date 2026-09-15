@@ -1,0 +1,117 @@
+---
+import '../../styles/global.css';
+
+export const prerender = false;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesión | Portafolio CMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-gray-50 dark:bg-[#0d1117] text-gray-900 dark:text-gray-100 font-sans min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-white dark:bg-[#161b22] border border-gray-200 dark:border-gray-800 rounded-3xl p-8 shadow-xl space-y-6">
+      
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white font-bold text-xl flex items-center justify-center mx-auto shadow-sm">
+          DP
+        </div>
+        <h1 class="text-2xl font-bold tracking-tight">Panel de Administración</h1>
+        <p class="text-xs text-gray-500 dark:text-gray-400">
+          Inicia sesión para gestionar proyectos, experiencia y mensajes.
+        </p>
+      </div>
+
+      <div id="error-alert" class="hidden p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-medium"></div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">
+            Correo Electrónico
+          </label>
+          <input
+            type="email"
+            id="email"
+            required
+            placeholder="admin@danilo.dev"
+            class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">
+            Contraseña
+          </label>
+          <input
+            type="password"
+            id="password"
+            required
+            placeholder="••••••••"
+            class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+          />
+        </div>
+
+        <button
+          type="submit"
+          id="submit-btn"
+          class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-xl transition shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-2"
+        >
+          Iniciar Sesión
+        </button>
+      </form>
+
+      <div class="text-center pt-2 border-t border-gray-100 dark:border-gray-800">
+        <a href="/" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+          ← Volver al Portafolio Público
+        </a>
+      </div>
+
+    </div>
+
+    <script is:inline>
+      const form = document.getElementById('login-form');
+      const errorAlert = document.getElementById('error-alert');
+      const submitBtn = document.getElementById('submit-btn');
+
+      form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorAlert?.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Iniciando sesión...';
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await res.json();
+          if (res.ok && data.success) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirect = urlParams.get('redirect') || '/admin';
+            window.location.href = redirect;
+          } else {
+            errorAlert.textContent = data.error || 'Credenciales inválidas.';
+            errorAlert.classList.remove('hidden');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Iniciar Sesión';
+          }
+        } catch (err) {
+          errorAlert.textContent = 'Error de conexión con el servidor.';
+          errorAlert.classList.remove('hidden');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Iniciar Sesión';
+        }
+      });
+    </script>
+  </body>
+</html>

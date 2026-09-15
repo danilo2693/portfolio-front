@@ -45,7 +45,6 @@ const gqlResponse = await fetchGraphQL(
   isDraft,
 );
 const siteData = gqlResponse?.data ?? null;
-console.log({ siteData });
 let about = null,
   experiences = [],
   projects = [],
@@ -59,9 +58,24 @@ if (!siteData) {
   projects = siteData.projects;
   totalProjects = siteData.projects.length;
 }
+
+const pageTitle =
+  lang === "es"
+    ? "Danilo Roman | Senior Web UI Developer & Ingeniero de Sistemas"
+    : "Danilo Roman | Senior Web UI Developer & Systems Engineer";
+
+const pageDescription =
+  lang === "es"
+    ? "Portafolio profesional de Danilo Roman. Más de 8 años de experiencia construyendo aplicaciones web de alto rendimiento con React, Next.js, Svelte, TypeScript y arquitecturas escalables."
+    : "Danilo Roman's professional portfolio. 8+ years of experience engineering high-performance web applications with React, Next.js, Svelte, TypeScript, and scalable frontend architectures.";
 ---
 
-<Layout title="Portfolio">
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  lang={lang}
+  image={about?.photos?.[0]?.url}
+>
   <Header
     client:load
     initialLang={lang as "en" | "es"}

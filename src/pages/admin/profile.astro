@@ -1,0 +1,32 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import ProfileManager from '../../components/admin/ProfileManager';
+import { prisma } from '../../lib/prisma';
+
+export const prerender = false;
+
+let profile = await prisma.profile.findUnique({
+  where: { id: 'default' },
+});
+
+if (!profile) {
+  profile = {
+    id: 'default',
+    name: 'Danilo',
+    email: '',
+    phone: null,
+    summary: '',
+    description: '',
+    avatarUrl: null,
+    avatarPublicId: null,
+    cvUrl: null,
+    cvPublicId: null,
+    links: [],
+    updatedAt: new Date(),
+  };
+}
+---
+
+<AdminLayout title="Perfil & Información Pública" currentPath="/admin/profile">
+  <ProfileManager client:load initialProfile={profile as any} />
+</AdminLayout>

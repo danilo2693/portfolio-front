@@ -148,10 +148,14 @@ function getImageUrl(photo: any) {
                         title={tech.title}
                       >
                         {tech.icon && (
-                          <div
-                            class="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4"
-                            set:html={tech.icon}
-                          />
+                          tech.icon.startsWith('http') ? (
+                            <img src={tech.icon} alt={tech.title} class="w-4 h-4 object-contain shrink-0" loading="lazy" />
+                          ) : (
+                            <div
+                              class="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4 shrink-0"
+                              set:html={tech.icon}
+                            />
+                          )
                         )}
                         <span>{tech.title}</span>
                       </div>

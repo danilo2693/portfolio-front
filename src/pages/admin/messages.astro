@@ -1,0 +1,15 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import MessageManager from '../../components/admin/MessageManager';
+import { prisma } from '../../lib/prisma';
+
+export const prerender = false;
+
+const initialMessages = await prisma.contactMessage.findMany({
+  orderBy: { createdAt: 'desc' },
+});
+---
+
+<AdminLayout title="Mensajes de Contacto" currentPath="/admin/messages">
+  <MessageManager client:load initialMessages={initialMessages as any} />
+</AdminLayout>

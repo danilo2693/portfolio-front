@@ -10,13 +10,25 @@ const lang = Astro.url.searchParams.get("lang") || "en";
 const t = useTranslations(lang as any);
 const isDraft = Astro.cookies.has("preview_mode");
 
-// Fetching ALL projects from Strapi API
+// Fetching ALL projects from database via Prisma
 const projectsRes = await getProjects(lang, undefined, isDraft);
 const projects = projectsRes?.data || [];
 const totalProjects = projectsRes?.meta?.pagination?.total || 0;
+
+const pageTitle = lang === "es"
+  ? "Todos los Proyectos | Danilo Roman - Senior Web UI Developer"
+  : "All Projects | Danilo Roman - Senior Web UI Developer";
+
+const pageDescription = lang === "es"
+  ? "Galería completa de proyectos de software desarrollados por Danilo Roman: plataformas empresariales, microfrontends, portales de alto tráfico y e-commerce."
+  : "Complete showcase of software projects engineered by Danilo Roman: enterprise platforms, microfrontends, high-traffic portals, and e-commerce solutions.";
 ---
 
-<Layout title="All Projects">
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  lang={lang}
+>
   <Header
     client:load
     initialLang={lang as "en" | "es"}

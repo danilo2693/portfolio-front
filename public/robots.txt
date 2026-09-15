@@ -1,0 +1,10 @@
+# Robots.txt for Danilo Roman Portfolio
+User-agent: *
+Allow: /
+Allow: /all-projects
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/admin/
+Disallow: /api/auth/
+
+Sitemap: /sitemap.xml

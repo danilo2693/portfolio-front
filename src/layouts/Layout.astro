@@ -2,22 +2,117 @@
 import '../styles/global.css';
 
 interface Props {
-  title: string;
+  title?: string;
+  description?: string;
+  lang?: string;
+  image?: string;
+  canonicalUrl?: string;
+  keywords?: string;
+  author?: string;
 }
 
-const { title } = Astro.props;
+const {
+  title = 'Danilo Roman | Senior Web UI Developer & Systems Engineer',
+  description = 'Portafolio profesional de Fernan Danilo Roman Tapia. Ingeniero de Sistemas y Senior Web UI Developer con más de 8 años de experiencia en React, Next.js, Svelte, TypeScript y arquitecturas frontend escalables.',
+  lang = 'en',
+  image = 'https://res.cloudinary.com/bddpwbcc/image/upload/v1789357107/nuzoipaaccesorios/guhktm0yoeifcy0oxs17.jpg',
+  canonicalUrl,
+  keywords = 'Danilo Roman, Web UI Developer, Frontend Architect, React, Svelte, SvelteKit, Next.js, TypeScript, Angular, Globant, Systems Engineer, Ingeniero de Sistemas, Colombia',
+  author = 'Fernan Danilo Roman Tapia',
+} = Astro.props;
+
+const siteOrigin = Astro.url.origin;
+const currentUrl = canonicalUrl || `${siteOrigin}${Astro.url.pathname}`;
+const formattedTitle = title.includes('Danilo Roman') ? title : `${title} | Danilo Roman`;
+
+// JSON-LD Structured Data (Person + ProfilePage)
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Fernan Danilo Roman Tapia',
+  alternateName: 'Danilo Roman',
+  jobTitle: 'Senior Web UI Developer',
+  url: siteOrigin,
+  email: 'danilo.2693@gmail.com',
+  telephone: '+573162299694',
+  nationality: {
+    '@type': 'Country',
+    name: 'Colombia',
+  },
+  alumniOf: [
+    {
+      '@type': 'EducationalOrganization',
+      name: 'Universidad del Valle',
+    },
+  ],
+  sameAs: [
+    'https://github.com/danilo2693',
+    'https://linkedin.com',
+  ],
+  knowsAbout: [
+    'JavaScript',
+    'TypeScript',
+    'React',
+    'Next.js',
+    'Svelte',
+    'SvelteKit',
+    'Angular',
+    'Tailwind CSS',
+    'PostgreSQL',
+    'GraphQL',
+    'Docker',
+    'AI Agents',
+    'Web Architecture',
+  ],
+};
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
+    <!-- Basic Meta Tags -->
     <meta charset="UTF-8" />
-    <meta name="description" content="Portfolio" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{formattedTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content={author} />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="theme-color" content="#2563eb" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+
+    <!-- Canonical and Hreflang Alternate Links -->
+    <link rel="canonical" href={currentUrl} />
+    <link rel="alternate" hreflang="es" href={`${siteOrigin}${Astro.url.pathname}?lang=es`} />
+    <link rel="alternate" hreflang="en" href={`${siteOrigin}${Astro.url.pathname}?lang=en`} />
+    <link rel="alternate" hreflang="x-default" href={`${siteOrigin}${Astro.url.pathname}`} />
+
+    <!-- Open Graph / Facebook / LinkedIn / WhatsApp -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:url" content={currentUrl} />
+    <meta property="og:title" content={formattedTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:site_name" content="Danilo Roman Portfolio" />
+    <meta property="og:locale" content={lang === 'es' ? 'es_CO' : 'en_US'} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={currentUrl} />
+    <meta name="twitter:title" content={formattedTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+
+    <!-- Favicon & Fonts -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Structured Data (Schema.org JSON-LD) -->
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+    <!-- Theme Initializer -->
     <script is:inline>
       const theme = (() => {
         if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
