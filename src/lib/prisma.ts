@@ -1,12 +1,17 @@
-import { PrismaClient } from '@prisma/client';
+import type { PrismaClient as PrismaClientType } from '@prisma/client';
+import pkg from '@prisma/client';
+
+// Handle both CJS and ESM module exports in Node and Vercel serverless environments
+const PrismaClientConstructor =
+  (pkg as any).PrismaClient || (pkg as any).default?.PrismaClient;
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+  prisma: PrismaClientType | undefined;
 };
 
-export const prisma =
+export const prisma: PrismaClientType =
   globalForPrisma.prisma ??
-  new PrismaClient({
+  new PrismaClientConstructor({
     log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
   });
 
